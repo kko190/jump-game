@@ -25,6 +25,8 @@ class Player {
   }
   update() {
     this.draw();
+
+    this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
     if (this.position.y + this.height + this.velocity.y < canvas.height) {
       this.velocity.y += gravity;
@@ -44,12 +46,54 @@ const player2 = new Player({
   y: 0,
 });
 
+// 키가 눌려있을 때만 움직임을 주기 위해서 key라는 변수를 만들어 각각의 키의 상태를 불리언 값으로 표현함.
+const keys = {
+  d: {
+    pressed: false,
+  },
+  a: {
+    pressed: false,
+  },
+};
+
 function animate() {
   window.requestAnimationFrame(animate);
   ctx.fillStyle = "white";
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   player.update();
   player2.update();
+
+  // x의 속도를 0으로 주고 조건에 따라 d키와 a키가 눌리면 x의 속도를 주어서 방향키에 반응하게 함.
+  player.velocity.x = 0;
+  if (keys.d.pressed) {
+    player.velocity.x = 2;
+  } else if (keys.a.pressed) {
+    player.velocity.x = -2;
+  }
 }
 
 animate();
+
+window.addEventListener("keydown", (e) => {
+  switch (e.key) {
+    case "d":
+      keys.d.pressed = true;
+      break;
+    case "a":
+      keys.a.pressed = true;
+      break;
+    case "w":
+      player.velocity.y = -15;
+      break;
+  }
+});
+window.addEventListener("keyup", (e) => {
+  switch (e.key) {
+    case "d":
+      keys.d.pressed = false;
+      break;
+    case "a":
+      keys.a.pressed = false;
+      break;
+  }
+});
